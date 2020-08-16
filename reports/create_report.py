@@ -4,7 +4,7 @@ See LICENSE.TXT for full license text
 SPDX-License-Identifier: MIT
 
 Author : sgeary  
-Created On : Sat Aug 08 2020
+Created On : Sun Aug 16 2020
 File : create_report.py
 '''
 
@@ -40,8 +40,8 @@ def register_report(reportName, reportPath, reportOrder, enableProjectPickerValu
         logger.info("    Current report list retreived")
     except requests.exceptions.RequestException as error:  # Just catch all errors
         logger.error(error)
-        raise ValueError(error)
-      
+        return
+
     ###############################################################################
     # We at least received a response from Code Insight so check the status to see
     # what happened if there was an error or the expected data
@@ -49,6 +49,14 @@ def register_report(reportName, reportPath, reportOrder, enableProjectPickerValu
         reportID =  response.json()["id"]
         logger.debug("%s was sucessfully registered and has an ID of %s" %(reportName, reportID))
         return reportID
+    elif response.status_code == 400:
+        logger.error("Response code %s - %s" %(response.status_code, response.text))
+        print("Response code: %s   -  Bad Request" %response.status_code )
+        response.raise_for_status()
+    elif response.status_code == 401:
+        logger.error("Response code %s - %s" %(response.status_code, response.text))
+        print("Response code: %s   -  Unauthorized" %response.status_code )
+        response.raise_for_status()    
     else: 
         logger.error("Response code %s - %s" %(response.status_code, response.text))
-        raise ValueError("Response code %s - %s" %(response.status_code, response.text))
+        response.raise_for_status()

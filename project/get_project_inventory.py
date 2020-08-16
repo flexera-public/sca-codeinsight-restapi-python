@@ -4,7 +4,7 @@ See LICENSE.TXT for full license text
 SPDX-License-Identifier: MIT
 
 Author : sgeary  
-Created On : Sun Aug 07 2020
+Created On : Sun Aug 16 2020
 File : get_project_inventory.py
 '''
 import logging
@@ -28,21 +28,10 @@ def get_project_inventory_details(domainName, port, projectID, authToken):
     # Make the REST API call with the project data           
     try:
         response = requests.get(RESTAPI_URL, headers=headers)
-    except requests.exceptions.HTTPError as errh:
-        logger.error("HTTP Error:",errh)
-        return -1
+    except requests.exceptions.RequestException as error:  # Just catch all errors
+        logger.error(error)
+        return
         
-    except requests.exceptions.ConnectionError as errc:
-        logger.error("Connection Error:",errc)
-        return -1
-
-    except requests.exceptions.Timeout as errt:
-        logger.error("Timeout Error:",errt)
-        return -1
-        
-    except requests.exceptions.RequestException as err:
-        logger.error("Unknown Error:",err)
-        return -1 
     
     ###############################################################################
     # We at least received a response from FNCI so check the status to see
@@ -51,28 +40,18 @@ def get_project_inventory_details(domainName, port, projectID, authToken):
         logger.info("    Project inventory received")
         INVENTORY = (response.json())
         return INVENTORY
-
     elif response.status_code == 400:
-        # Bad Request
-        # Assume there is no task data for the project
-        logger.error("Response code 400 - %s" %response.text) 
-        return -1         
-        
+        logger.error("Response code %s - %s" %(response.status_code, response.text))
+        print("Response code: %s   -  Bad Request" %response.status_code )
+        response.raise_for_status()
     elif response.status_code == 401:
-        # Unauthorized
-        logger.error("Response code 401 - %s" %response.text) 
-        return -1 
-        
+        logger.error("Response code %s - %s" %(response.status_code, response.text))
+        print("Response code: %s   -  Unauthorized" %response.status_code )
+        response.raise_for_status() 
     elif response.status_code == 404:
-        # Not Found
-        logger.error("Response code 404 - %s" %response.text)
-        return -1 
-        
-    elif response.status_code == 405:
-        # Method Not Allowed
-        logger.error("Response code 405 - %s" %response.text)
-        return -1 
-        
-    elif response.status_code == 500:
-        logger.error("Response code 500 - %s" %response.text)
-        return -1 
+        logger.error("Response code %s - %s" %(response.status_code, response.text))
+        print("Response code: %s   -  Not Found" %response.status_code )
+        response.raise_for_status()   
+    else: 
+        logger.error("Response code %s - %s" %(response.status_code, response.text))
+        response.raise_for_status()
