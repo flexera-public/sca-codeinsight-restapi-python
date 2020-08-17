@@ -30,7 +30,7 @@ def get_currently_registered_reports(domainName, port, authToken):
         logger.info("    Current report list retreived")
     except requests.exceptions.RequestException as error:  # Just catch all errors
         logger.error(error)
-        return
+        raise
         
     ###############################################################################
     # We at least received a response from Code Insight so check the status to see
