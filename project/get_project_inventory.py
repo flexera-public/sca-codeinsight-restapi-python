@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 def get_project_inventory_details(domainName, port, projectID, authToken):
     logger.info("Entering get_project_inventory")
 
-    RESTAPI_BASEURL = "http://" + domainName + ":" + port + "/codeinsight/api/"
+    RESTAPI_BASEURL = domainName + ":" + port + "/codeinsight/api/"
     ENDPOINT_URL = RESTAPI_BASEURL + "project/inventory/"
     
     RESTAPI_URL = ENDPOINT_URL + str(projectID) + "?published=true" 

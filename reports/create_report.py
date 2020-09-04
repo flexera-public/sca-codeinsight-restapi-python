@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def register_report(reportName, reportPath, reportOrder, enableProjectPickerValue, domainName, port, authToken):
     logger.info("Entering register_report")
 
-    RESTAPI_BASEURL = "http://" + domainName + ":" + port + "/codeinsight/api/"
+    RESTAPI_BASEURL = domainName + ":" + port + "/codeinsight/api/"
     ENDPOINT_URL = RESTAPI_BASEURL + "reports/"
     RESTAPI_URL = ENDPOINT_URL
     logger.debug("    RESTAPI_URL: %s" %RESTAPI_URL)
