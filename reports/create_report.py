@@ -14,7 +14,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------------------------#
-def register_report(baseURL, reportOrder, enableProjectPickerValue, domainName, port, authToken):
+def register_report(reportName, reportPath, reportOrder, enableProjectPickerValue, baseURL, authToken):
     logger.info("Entering register_report")
 
     RESTAPI_BASEURL = baseURL + "/codeinsight/api/"
