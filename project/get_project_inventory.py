@@ -13,10 +13,10 @@ import requests
 logger = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------------------------#
-def get_project_inventory_details(domainName, port, projectID, authToken):
+def get_project_inventory_details(baseURL, projectID, authToken):
     logger.info("Entering get_project_inventory")
 
-    RESTAPI_BASEURL = domainName + ":" + port + "/codeinsight/api/"
+    RESTAPI_BASEURL = baseURL + "/codeinsight/api/"
     ENDPOINT_URL = RESTAPI_BASEURL + "project/inventory/"
     
     RESTAPI_URL = ENDPOINT_URL + str(projectID) + "?published=true" 

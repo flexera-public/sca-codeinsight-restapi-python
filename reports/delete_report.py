@@ -13,10 +13,10 @@ import requests
 logger = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------------------------#
-def unregister_report(domainName, port, authToken, reportName):
+def unregister_report(baseURL, authToken, reportName):
     logger.info("Entering upload_project_report_data")
 
-    RESTAPI_BASEURL = domainName + ":" + port + "/codeinsight/api/"
+    RESTAPI_BASEURL = baseURL + "/codeinsight/api/"
     ENDPOINT_URL = RESTAPI_BASEURL + "reports/"
     RESTAPI_URL = ENDPOINT_URL + reportName
     logger.debug("    RESTAPI_URL: %s" %RESTAPI_URL)
