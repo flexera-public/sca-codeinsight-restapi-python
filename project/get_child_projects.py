@@ -37,7 +37,7 @@ def get_child_projects_recursively(baseURL, projectID, authToken):
     # what happened if there was an error or the expected data
     if response.status_code == 200:
         logger.info("    Child project listing received")
-        childProjects = response.json()
+        childProjects = response.json()["data"]
         return childProjects
     elif response.status_code == 400:
         logger.error("Response code %s - %s" %(response.status_code, response.text))
