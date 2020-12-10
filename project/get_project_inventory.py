@@ -16,10 +16,10 @@ logger = logging.getLogger(__name__)
 def get_project_inventory_details(baseURL, projectID, authToken):
     logger.info("Entering get_project_inventory")
 
+    APIOPTIONS = ""
     RESTAPI_BASEURL = baseURL + "/codeinsight/api/"
-    ENDPOINT_URL = RESTAPI_BASEURL + "project/inventory/"
-    
-    RESTAPI_URL = ENDPOINT_URL + str(projectID) + "?published=true" 
+    ENDPOINT_URL = RESTAPI_BASEURL + "project/inventory/" + str(projectID) + "?page=" 
+    RESTAPI_URL = ENDPOINT_URL + "1" + APIOPTIONS
     logger.debug("    RESTAPI_URL: %s" %RESTAPI_URL)
     
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken} 
@@ -38,8 +38,21 @@ def get_project_inventory_details(baseURL, projectID, authToken):
     # what happened if there was an error or the expected data
     if response.status_code == 200:
         logger.info("    Project inventory received")
-        INVENTORY = (response.json())
-        return INVENTORY
+        projectInventory = response.json()
+        currentPage = response.headers["Current-page"]
+        numPages = response.headers["Number-of-pages"]
+        nextPage = int(currentPage) + 1
+
+        while int(nextPage) <= int(numPages):
+            RESTAPI_URL = ENDPOINT_URL + str(nextPage) + APIOPTIONS
+            logger.debug("    RESTAPI_URL: %s" %RESTAPI_URL)
+            response = requests.get(RESTAPI_URL, headers=headers)
+
+            nextPage = int(response.headers["Current-page"]) + 1
+            projectInventory["inventoryItems"] += response.json()["inventoryItems"] 
+
+        return projectInventory
+
     elif response.status_code == 400:
         logger.error("Response code %s - %s" %(response.status_code, response.text))
         print("Response code: %s   -  Bad Request" %response.status_code )
@@ -55,3 +68,4 @@ def get_project_inventory_details(baseURL, projectID, authToken):
     else: 
         logger.error("Response code %s - %s" %(response.status_code, response.text))
         response.raise_for_status()
+
