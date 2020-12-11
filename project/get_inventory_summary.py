@@ -38,7 +38,7 @@ def get_project_inventory_with_v3_summary(baseURL, projectID, authToken):
     # what happened if there was an error or the expected data
     if response.status_code == 200:
         logger.info("    Project inventory received")
-        projectInventorySummary = response.json()
+        projectInventorySummary = response.json()["data"]
         currentPage = response.headers["Current-page"]
         numPages = response.headers["Number-of-pages"]
         nextPage = int(currentPage) + 1
@@ -49,7 +49,7 @@ def get_project_inventory_with_v3_summary(baseURL, projectID, authToken):
             response = requests.get(RESTAPI_URL, headers=headers)
 
             nextPage = int(response.headers["Current-page"]) + 1
-            projectInventorySummary += response.json()
+            projectInventorySummary += response.json()["data"]
 
         return projectInventorySummary
 
