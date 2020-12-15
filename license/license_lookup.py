@@ -4,8 +4,8 @@ See LICENSE.TXT for full license text
 SPDX-License-Identifier: MIT
 
 Author : sgeary  
-Created On : Thu Dec 10 2020
-File : get_project_information.py
+Created On : Mon Dec 14 2020
+File : license_lookup.py
 '''
 import logging
 import requests
@@ -13,13 +13,13 @@ import requests
 logger = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------------------------#
-def get_project_information_summary(baseURL, projectID, authToken):
-    logger.info("Entering get_project_information_summary")
+def get_license_details(baseURL, selectedLicenseID, authToken):
+    logger.info("Entering get_license_details")
 
+    APIOPTIONS = "licenseId=" + str(selectedLicenseID)
     RESTAPI_BASEURL = baseURL + "/codeinsight/api/"
-    ENDPOINT_URL = RESTAPI_BASEURL + "projects/"
-    
-    RESTAPI_URL = ENDPOINT_URL + str(projectID)
+    ENDPOINT_URL = RESTAPI_BASEURL + "license/lookup?" 
+    RESTAPI_URL = ENDPOINT_URL + APIOPTIONS
     logger.debug("    RESTAPI_URL: %s" %RESTAPI_URL)
     
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken} 
@@ -37,9 +37,11 @@ def get_project_information_summary(baseURL, projectID, authToken):
     # We at least received a response from FNCI so check the status to see
     # what happened if there was an error or the expected data
     if response.status_code == 200:
-        logger.info("    Project information received")
-        projectInfoSummary = (response.json()["data"])
-        return projectInfoSummary
+        logger.info("    License information received")
+        licenseInformation = response.json()["Content: "]
+
+        return licenseInformation
+
     elif response.status_code == 400:
         logger.error("Response code %s - %s" %(response.status_code, response.text))
         print("Response code: %s   -  Bad Request" %response.status_code )
