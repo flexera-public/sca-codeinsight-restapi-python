@@ -10,11 +10,12 @@ File : create_report.py
 
 import logging
 import requests
+import json
 
 logger = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------------------------#
-def register_report(reportName, reportPath, reportOrder, enableProjectPickerValue, baseURL, authToken):
+def register_report(reportName, reportPath, reportOrder, enableProjectPickerValue, reportOptions, baseURL, authToken):
     logger.info("Entering register_report")
 
     RESTAPI_BASEURL = baseURL + "/codeinsight/api/"
@@ -22,15 +23,29 @@ def register_report(reportName, reportPath, reportOrder, enableProjectPickerValu
     RESTAPI_URL = ENDPOINT_URL
     logger.debug("    RESTAPI_URL: %s" %RESTAPI_URL)
 
+    #Take the list of reportOptions and create a string
+    if len(reportOptions):
+        optionsString = ""
+        for option in reportOptions:
+            optionsString += json.dumps(option) +","
+
+        optionsString = optionsString[:-1]
+
+    else:
+        optionsString = ""
+
+
     createReportBody = '''
     {
         "name": "''' + reportName + '''",
         "path": "''' + reportPath + '''",
         "enabled": "true",
         "order": "''' + str(reportOrder) + '''",
-        "enableProjectPicker": "''' + enableProjectPickerValue + '''"
+        "enableProjectPicker": "''' + enableProjectPickerValue + '''",
+        "reportOptions" : [''' + optionsString + ''']
     }'''
-    
+
+   
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken}     
        
     ##########################################################################   
@@ -39,8 +54,12 @@ def register_report(reportName, reportPath, reportOrder, enableProjectPickerValu
         response = requests.post(RESTAPI_URL, headers=headers, data=createReportBody)
         logger.info("    Current report list retreived")
     except requests.exceptions.RequestException as error:  # Just catch all errors
+        print(response)
         logger.error(error)
-        return
+        #return
+
+
+
 
     ###############################################################################
     # We at least received a response from Code Insight so check the status to see
