@@ -46,7 +46,6 @@ def add_files_to_inventory_and_mark_as_reviewed(baseURL, inventoryID, authToken,
     # Make the REST API call with the project data           
     try:
         response = requests.put(RESTAPI_URL, headers=headers, data=body)
-        print(response)
     except requests.exceptions.RequestException as error:  # Just catch all errors
         logger.error(error)
 
