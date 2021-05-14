@@ -70,12 +70,26 @@ def get_all_project_inventory(baseURL, projectID, authToken):
         logger.error("Response code %s - %s" %(response.status_code, response.text))
         response.raise_for_status()
 
+#------------------------------------------------------------------------------------------#
+def get_project_inventory_with_v2_summary(baseURL, projectID, authToken):
+    logger.info("Entering get_project_inventory_with_v2_summary")
+    APIOPTIONS = "&vulnerabilitySummary=true&cvssVersion=V2"
+    projectInventorySummary = get_project_inventory_summary(baseURL, projectID, authToken, APIOPTIONS)
+    return projectInventorySummary
+
 
 #------------------------------------------------------------------------------------------#
 def get_project_inventory_with_v3_summary(baseURL, projectID, authToken):
     logger.info("Entering get_project_inventory_with_v3_summary")
-
     APIOPTIONS = "&vulnerabilitySummary=true&cvssVersion=V3"
+    projectInventorySummary = get_project_inventory_summary(baseURL, projectID, authToken, APIOPTIONS)
+    return projectInventorySummary
+
+
+#------------------------------------------------------------------------------------------#
+def get_project_inventory_summary(baseURL, projectID, authToken, APIOPTIONS):
+    logger.info("Entering get_project_inventory_summary")
+
     RESTAPI_BASEURL = baseURL + "/codeinsight/api/"
     ENDPOINT_URL = RESTAPI_BASEURL + "projects/" + str(projectID) + "/inventorySummary/?offset=" 
     RESTAPI_URL = ENDPOINT_URL + "1" + APIOPTIONS
