@@ -40,6 +40,11 @@ def get_all_project_inventory(baseURL, projectID, authToken):
     if response.status_code == 200:
         logger.info("    Project inventory received")
         projectInventorySummary = response.json()["data"]
+        
+        # If there are no inventory items just return
+        if not projectInventorySummary:
+            return projectInventorySummary
+
         currentPage = response.headers["Current-page"]
         numPages = response.headers["Number-of-pages"]
         nextPage = int(currentPage) + 1
