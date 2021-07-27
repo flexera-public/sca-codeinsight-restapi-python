@@ -35,7 +35,7 @@ def get_scanned_files_details_with_options(baseURL, projectID, authToken, APIOPT
     logger.info("Entering get_scanned_files_details_with_options")
 
     RESTAPI_BASEURL = baseURL + "/codeinsight/api/"
-    ENDPOINT_URL = RESTAPI_BASEURL + "projects/" + str(projectID) + "/allscannedfiles/?page=" 
+    ENDPOINT_URL = RESTAPI_BASEURL + "projects/" + str(projectID) + "/allscannedfiles/?offset=" 
     RESTAPI_URL = ENDPOINT_URL + "1" + APIOPTIONS
     logger.debug("    RESTAPI_URL: %s" %RESTAPI_URL)
    
@@ -60,11 +60,15 @@ def get_scanned_files_details_with_options(baseURL, projectID, authToken, APIOPT
         numPages = response.headers["Number-of-pages"]
         nextPage = int(currentPage) + 1
 
+        print("Numpages - %s   nextPage - %s" %(numPages, nextPage))
+
         while int(nextPage) <= int(numPages):
             RESTAPI_URL = ENDPOINT_URL + str(nextPage) + APIOPTIONS
+            print(RESTAPI_URL)
             response = requests.get(RESTAPI_URL, headers=headers)
 
             nextPage = int(response.headers["Current-page"]) + 1
+            print("Numpages - %s   nextPage - %s" %(numPages, nextPage))
             scannedFiles += response.json()["data"]
         
         return scannedFiles
