@@ -60,15 +60,11 @@ def get_scanned_files_details_with_options(baseURL, projectID, authToken, APIOPT
         numPages = response.headers["Number-of-pages"]
         nextPage = int(currentPage) + 1
 
-        print("Numpages - %s   nextPage - %s" %(numPages, nextPage))
-
         while int(nextPage) <= int(numPages):
             RESTAPI_URL = ENDPOINT_URL + str(nextPage) + APIOPTIONS
-            print(RESTAPI_URL)
             response = requests.get(RESTAPI_URL, headers=headers)
 
             nextPage = int(response.headers["Current-page"]) + 1
-            print("Numpages - %s   nextPage - %s" %(numPages, nextPage))
             scannedFiles += response.json()["data"]
         
         return scannedFiles
