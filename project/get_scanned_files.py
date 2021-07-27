@@ -12,17 +12,33 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+
 #------------------------------------------------------------------------------------------#
 def get_scanned_files_details(baseURL, projectID, authToken):
     logger.info("Entering get_scanned_files_details")
+    APIOPTIONS = ""
+    scannedFiles = get_scanned_files_details_with_options(baseURL, projectID, authToken, APIOPTIONS)
+    return scannedFiles
 
-    currentPage = 1 # Default page number for results
+
+#------------------------------------------------------------------------------------------#
+def get_scanned_files_details_with_MD5_and_SHA1(baseURL, projectID, authToken):
+    logger.info("Entering get_scanned_files_details_with_MD5_and_SHA1")
+
+    APIOPTIONS = "&includeMD5Hash=true&includeSHA1Hash=true"
+
+    scannedFiles = get_scanned_files_details_with_options(baseURL, projectID, authToken, APIOPTIONS)
+    return scannedFiles
+
+#------------------------------------------------------------------------------------------#
+def get_scanned_files_details_with_options(baseURL, projectID, authToken, APIOPTIONS):
+    logger.info("Entering get_scanned_files_details_with_options")
 
     RESTAPI_BASEURL = baseURL + "/codeinsight/api/"
-    ENDPOINT_URL = RESTAPI_BASEURL + "projects/"
-    RESTAPI_URL = ENDPOINT_URL + str(projectID) + "/allscannedfiles?includeMD5Hash=true&offset=" + str(currentPage) + "&limit=25"
+    ENDPOINT_URL = RESTAPI_BASEURL + "projects/" + str(projectID) + "/allscannedfiles/?page=" 
+    RESTAPI_URL = ENDPOINT_URL + "1" + APIOPTIONS
     logger.debug("    RESTAPI_URL: %s" %RESTAPI_URL)
-    
+   
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken}   
        
     ##########################################################################   
@@ -45,7 +61,7 @@ def get_scanned_files_details(baseURL, projectID, authToken):
         nextPage = int(currentPage) + 1
 
         while int(nextPage) <= int(numPages):
-            RESTAPI_URL = ENDPOINT_URL + str(projectID) + "/allscannedfiles?includeMD5Hash=true&offset=" + str(nextPage) + "&limit=25"
+            RESTAPI_URL = ENDPOINT_URL + str(nextPage) + APIOPTIONS
             response = requests.get(RESTAPI_URL, headers=headers)
 
             nextPage = int(response.headers["Current-page"]) + 1
