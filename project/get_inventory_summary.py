@@ -35,6 +35,12 @@ def get_project_inventory_with_v3_summary(baseURL, projectID, authToken):
     projectInventorySummary = get_project_inventory_summary(baseURL, projectID, authToken, APIOPTIONS)
     return projectInventorySummary
 
+#------------------------------------------------------------------------------------------#
+def get_project_inventory_without_vulns_summary(baseURL, projectID, authToken):
+    logger.info("Entering get_project_inventory_without_vulns_summary")
+    APIOPTIONS = "&vulnerabilitySummary=false"
+    projectInventorySummary = get_project_inventory_summary(baseURL, projectID, authToken, APIOPTIONS)
+    return projectInventorySummary
 
 #------------------------------------------------------------------------------------------#
 def get_project_inventory_summary(baseURL, projectID, authToken, APIOPTIONS):
