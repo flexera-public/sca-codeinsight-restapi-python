@@ -71,9 +71,15 @@ def get_scanned_files_details_with_options(baseURL, projectID, authToken, APIOPT
 
 
     elif response.status_code == 400:
-        logger.error("Response code %s - %s" %(response.status_code, response.text))
-        print("Response code: %s   -  Bad Request" %response.status_code )
-        response.raise_for_status()
+
+        print(response.json())
+        # See if there are no results or an error
+        if "Total records :0 number of pages :0" in str(response.json()["errors"]):
+            return []
+        else:
+            logger.error("Response code %s - %s" %(response.status_code, response.text))
+            print("Response code: %s   -  Bad Request" %response.status_code )
+            response.raise_for_status()
     elif response.status_code == 401:
         logger.error("Response code %s - %s" %(response.status_code, response.text))
         print("Response code: %s   -  Unauthorized" %response.status_code )
