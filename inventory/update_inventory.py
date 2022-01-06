@@ -18,11 +18,14 @@ logger = logging.getLogger(__name__)
 def update_inventory_notices_text(inventoryID, noticesText, baseURL, authToken):
     logger.info("Entering update_inventory_notices_text")
 
+    print(noticesText)
+
     # Escape some special characters
     noticesText = noticesText.replace(r'"', '\\"')
     noticesText = noticesText.replace("\n", "\\n")
     noticesText = noticesText.replace("\t", "\\t")
     noticesText = noticesText.replace("\r", "\\r")
+    noticesText = noticesText.replace("\f", "\\f")
 
     updateBody = ''' { "noticeText" : "''' + noticesText + '''" }'''
 
