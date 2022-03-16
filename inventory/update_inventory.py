@@ -10,9 +10,29 @@ File : update_inventory.py
 
 import logging
 import requests
-import re
 
 logger = logging.getLogger(__name__)
+
+#------------------------------------------------------------------------------------------#
+def update_technopedia_id(inventoryID, customFieldId, technopediaId, baseURL, authToken):
+    logger.info("Entering update_inventory_notices_text")
+
+    updateBody = '''{ 
+                        "customFields": [
+                            {
+                                "id": "''' + str(customFieldId) + '''",
+                                "value": "''' + technopediaId + '''"
+                            }
+                        ]
+                    }'''
+
+    if update_inventory_item_details(inventoryID, updateBody, baseURL, authToken ):
+        logger.info("Technopedia Catalog ID updated")
+        return True
+    else:
+        logger.error("Error updating Technopedia Catalog ID")
+        return False
+
 
 #------------------------------------------------------------------------------------------#
 def update_inventory_notices_text(inventoryID, noticesText, baseURL, authToken):
@@ -33,6 +53,7 @@ def update_inventory_notices_text(inventoryID, noticesText, baseURL, authToken):
     else:
         logger.error("Error updating inventory notices field")
         return False
+
 
 
 #------------------------------------------------------------------------------------------#
