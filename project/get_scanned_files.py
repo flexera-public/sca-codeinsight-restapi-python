@@ -72,9 +72,9 @@ def get_scanned_files_details_with_options(baseURL, projectID, authToken, APIOPT
 
     elif response.status_code == 400:
 
-        print(response.json())
         # See if there are no results or an error
         if "Total records :0 number of pages :0" in str(response.json()["errors"]):
+            logger.error("No scanned files for projects")
             return []
         else:
             logger.error("Response code %s - %s" %(response.status_code, response.text))
