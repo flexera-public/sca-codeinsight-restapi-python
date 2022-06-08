@@ -14,6 +14,13 @@ logger = logging.getLogger(__name__)
 
 
 #------------------------------------------------------------------------------------------#
+def get_project_inventory_without_vulns(baseURL, projectID, authToken):
+    logger.info("Entering get_project_inventory_without_vulns")
+    APIOPTIONS = ""
+    projectInventorySummary = get_project_inventory_summary(baseURL, projectID, authToken, APIOPTIONS)
+    return projectInventorySummary
+
+#------------------------------------------------------------------------------------------#
 def get_all_project_inventory(baseURL, projectID, authToken):
     logger.info("Entering get_all_project_inventory")
     APIOPTIONS = "&published=ANY"
@@ -35,6 +42,12 @@ def get_project_inventory_with_v3_summary(baseURL, projectID, authToken):
     projectInventorySummary = get_project_inventory_summary(baseURL, projectID, authToken, APIOPTIONS)
     return projectInventorySummary
 
+#------------------------------------------------------------------------------------------#
+def get_project_inventory_without_vulns_summary(baseURL, projectID, authToken):
+    logger.info("Entering get_project_inventory_without_vulns_summary")
+    APIOPTIONS = "&vulnerabilitySummary=false"
+    projectInventorySummary = get_project_inventory_summary(baseURL, projectID, authToken, APIOPTIONS)
+    return projectInventorySummary
 
 #------------------------------------------------------------------------------------------#
 def get_project_inventory_summary(baseURL, projectID, authToken, APIOPTIONS):
