@@ -58,13 +58,13 @@ def update_inventory_notices_text(inventoryID, noticesText, baseURL, authToken):
 
 #------------------------------------------------------------------------------------------#
 def update_inventory_item_details(inventoryID, updateBody, baseURL, authToken ):
-    logger.info("Entering update_inventory_item_details")
+    logger.info("    Entering update_inventory_item_details")
 
     RESTAPI_BASEURL = baseURL + "/codeinsight/api/"
     ENDPOINT_URL = RESTAPI_BASEURL + "inventories/"
     RESTAPI_URL = ENDPOINT_URL + str(inventoryID)
 
-    logger.debug("    RESTAPI_URL: %s" %RESTAPI_URL)
+    logger.debug("        RESTAPI_URL: %s" %RESTAPI_URL)
 
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken} 
 
@@ -81,16 +81,11 @@ def update_inventory_item_details(inventoryID, updateBody, baseURL, authToken ):
     # We at least received a response from Code Insight so check the status to see
     # what happened if there was an error or the expected data
     if response.status_code == 200:
-        logger.info("Inventory item updated")
+        logger.info("        Inventory item updated")
         return True
-    elif response.status_code == 400:
-        logger.error("Response code %s - %s" %(response.status_code, response.text))
+    else:
+        logger.error("        Unable to update notices text for inventory item: %s" %inventoryID)
+        logger.error("        Response code %s - %s" %(response.status_code, response.text))
+        logger.debug("        updateBody: %s" %(updateBody))
+        print("Unable to update notices text for inventory item: %s" %inventoryID)
         print("Response code: %s   -  Bad Request" %response.status_code )
-        response.raise_for_status()
-    elif response.status_code == 401:
-        logger.error("Response code %s - %s" %(response.status_code, response.text))
-        print("Response code: %s   -  Unauthorized" %response.status_code )
-        response.raise_for_status()    
-    else: 
-        logger.error("Response code %s - %s" %(response.status_code, response.text))
-        response.raise_for_status()
