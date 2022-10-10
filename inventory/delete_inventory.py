@@ -37,8 +37,8 @@ def delete_inventory_item(baseURL, inventoryID, authToken):
     # what happened if there was an error or the expected data
     if response.status_code == 200:
         logger.info("    Inventory item deleted.")
-        return(True)
-    elif response.status_code == 400:
+        return response.json()
+    else:
         logger.error("Response code %s - %s" %(response.status_code, response.text))
         return {"error" : response.text}
 

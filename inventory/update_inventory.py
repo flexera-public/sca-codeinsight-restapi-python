@@ -26,12 +26,8 @@ def update_technopedia_id(inventoryID, customFieldId, technopediaId, baseURL, au
                         ]
                     }'''
 
-    if update_inventory_item_details(inventoryID, updateBody, baseURL, authToken ):
-        logger.info("Technopedia Catalog ID updated")
-        return True
-    else:
-        logger.error("Error updating Technopedia Catalog ID")
-        return False
+    response =  update_inventory_item_details(inventoryID, updateBody, baseURL, authToken )
+    return response
 
 
 #------------------------------------------------------------------------------------------#
@@ -47,13 +43,8 @@ def update_inventory_notices_text(inventoryID, noticesText, baseURL, authToken):
 
     updateBody = ''' { "noticeText" : "''' + noticesText + '''" }'''
 
-    if update_inventory_item_details(inventoryID, updateBody, baseURL, authToken ):
-        logger.info("Inventory Notices updated")
-        return True
-    else:
-        logger.error("Error updating inventory notices field")
-        return False
-
+    response =  update_inventory_item_details(inventoryID, updateBody, baseURL, authToken )
+    return response
 
 
 #------------------------------------------------------------------------------------------#
@@ -68,24 +59,20 @@ def update_inventory_item_details(inventoryID, updateBody, baseURL, authToken ):
 
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken} 
 
-
     ##########################################################################   
     # Make the REST API call with the project data           
     try:
         response = requests.put(RESTAPI_URL, headers=headers, data=updateBody.encode('utf-8'))
     except requests.exceptions.RequestException as error:  # Just catch all errors
         logger.error(error)
-
+        return {"error" : error}
 
     ###############################################################################
-    # We at least received a response from Code Insight so check the status to see
+    # We at least received a response from FNCI so check the status to see
     # what happened if there was an error or the expected data
     if response.status_code == 200:
-        logger.info("        Inventory item updated")
-        return True
+        logger.info("    Inventory item deleted.")
+        return response.json()
     else:
-        logger.error("        Unable to update notices text for inventory item: %s" %inventoryID)
-        logger.error("        Response code %s - %s" %(response.status_code, response.text))
-        logger.debug("        updateBody: %s" %(updateBody))
-        print("Unable to update notices text for inventory item: %s" %inventoryID)
-        print("Response code: %s   -  Bad Request" %response.status_code )
+        logger.error("Response code %s - %s" %(response.status_code, response.text))
+        return {"error" : response.text}
