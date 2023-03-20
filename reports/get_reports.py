@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------------------------#
 def get_all_currently_registered_reports(baseURL, authToken):
+    logger.info("Entering get_all_currently_registered_reports")
 
     APIOPTIONS = ""
     currentReports = get_currently_registered_reports(baseURL, authToken, APIOPTIONS)
@@ -22,6 +23,7 @@ def get_all_currently_registered_reports(baseURL, authToken):
 
 #------------------------------------------------------------------------------------------#
 def get_all_currently_registered_reports_by_name(baseURL, authToken, reportName):
+    logger.info("Entering get_all_currently_registered_reports_by_name")
 
     APIOPTIONS = "?name=" + reportName
     currentReports = get_currently_registered_reports(baseURL, authToken, APIOPTIONS)
@@ -30,7 +32,7 @@ def get_all_currently_registered_reports_by_name(baseURL, authToken, reportName)
 
 #------------------------------------------------------------------------------------------#
 def get_currently_registered_reports(baseURL, authToken, APIOPTIONS):
-    logger.info("Entering upload_project_report_data")
+    logger.info("Entering get_currently_registered_reports")
 
     RESTAPI_BASEURL = baseURL + "/codeinsight/api/"
     ENDPOINT_URL = RESTAPI_BASEURL + "reports/"
@@ -43,7 +45,6 @@ def get_currently_registered_reports(baseURL, authToken, APIOPTIONS):
     # Make the REST API call with the project data           
     try:
         response = requests.get(RESTAPI_URL, headers=headers)
-        logger.info("    Current report list retreived")
     except requests.exceptions.RequestException as error:  # Just catch all errors
         logger.error(error)
         return {"error" : error}
@@ -55,4 +56,4 @@ def get_currently_registered_reports(baseURL, authToken, APIOPTIONS):
         return(response.json()["data"])  
     else: 
         logger.error("Response code %s - %s" %(response.status_code, response.text))
-        return {"error" : response.text}
+        return {"error" : response.text }

@@ -27,13 +27,12 @@ def update_custom_report(reportName, reportPath, reportID, reportOrder, enablePr
     if len(reportOptions):
         optionsString = ""
         for option in reportOptions:
-            optionsString += json.dumps(option) +","
+            optionsString += json.dumps(reportOptions[option]) +","
 
         optionsString = optionsString[:-1]
 
     else:
         optionsString = ""
-
 
     createReportBody = '''
     {
@@ -52,27 +51,15 @@ def update_custom_report(reportName, reportPath, reportID, reportOrder, enablePr
     # Make the REST API call with the project data           
     try:
         response = requests.put(RESTAPI_URL, headers=headers, data=createReportBody)
-        logger.info("    Current report list retreived")
     except requests.exceptions.RequestException as error:  # Just catch all errors
-        print(response)
         logger.error(error)
-        #return
+        return {"error" : error}
 
     ###############################################################################
     # We at least received a response from Code Insight so check the status to see
     # what happened if there was an error or the expected data
     if response.status_code == 200:
-        logger.debug("%s was sucessfully updated" %(reportName))
-        return
-
-    elif response.status_code == 400:
-        logger.error("Response code %s - %s" %(response.status_code, response.text))
-        print("Response code: %s   -  Bad Request" %response.status_code )
-        response.raise_for_status()
-    elif response.status_code == 401:
-        logger.error("Response code %s - %s" %(response.status_code, response.text))
-        print("Response code: %s   -  Unauthorized" %response.status_code )
-        response.raise_for_status()    
+        return response.json()
     else: 
         logger.error("Response code %s - %s" %(response.status_code, response.text))
-        response.raise_for_status()
+        return {"error" : response.text}

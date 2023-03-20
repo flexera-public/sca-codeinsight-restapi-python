@@ -27,13 +27,12 @@ def register_report(reportName, reportPath, reportOrder, enableProjectPickerValu
     if len(reportOptions):
         optionsString = ""
         for option in reportOptions:
-            optionsString += json.dumps(option) +","
+            optionsString += json.dumps(reportOptions[option]) +","
 
-        optionsString = optionsString[:-1]
+        optionsString = optionsString[:-1]  # Get rid of last comma
 
     else:
         optionsString = ""
-
 
     createReportBody = '''
     {
@@ -44,7 +43,6 @@ def register_report(reportName, reportPath, reportOrder, enableProjectPickerValu
         "enableProjectPicker": "''' + enableProjectPickerValue + '''",
         "reportOptions" : [''' + optionsString + ''']
     }'''
-
    
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken}     
        
@@ -52,30 +50,16 @@ def register_report(reportName, reportPath, reportOrder, enableProjectPickerValu
     # Make the REST API call with the project data           
     try:
         response = requests.post(RESTAPI_URL, headers=headers, data=createReportBody)
-        logger.info("    Current report list retreived")
     except requests.exceptions.RequestException as error:  # Just catch all errors
-        print(response)
         logger.error(error)
-        #return
-
-
-
+        return {"error" : error}
 
     ###############################################################################
-    # We at least received a response from Code Insight so check the status to see
+    # We at least received a response from so check the status to see
     # what happened if there was an error or the expected data
     if response.status_code == 201:
-        reportID =  response.json()["id"]
-        logger.debug("%s was sucessfully registered and has an ID of %s" %(reportName, reportID))
-        return reportID
-    elif response.status_code == 400:
-        logger.error("Response code %s - %s" %(response.status_code, response.text))
-        print("Response code: %s   -  Bad Request" %response.status_code )
-        response.raise_for_status()
-    elif response.status_code == 401:
-        logger.error("Response code %s - %s" %(response.status_code, response.text))
-        print("Response code: %s   -  Unauthorized" %response.status_code )
-        response.raise_for_status()    
+        logger.debug("%s was sucessfully registered." %(reportName))
+        return response.json()
     else: 
         logger.error("Response code %s - %s" %(response.status_code, response.text))
-        response.raise_for_status()
+        return {"error" : response.text}
