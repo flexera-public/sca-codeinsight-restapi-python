@@ -20,6 +20,14 @@ def get_project_inventory_details(baseURL, projectID, authToken):
     return projectInventory
 
 #------------------------------------------------------------------------------------------#
+def get_project_inventory_details_without_files_or_vulnerabilities(baseURL, projectID, authToken):
+    logger.info("Entering get_project_inventory_details_without_files_or_vulnerabilities")
+    APIOPTIONS = "&includeFiles=false&skipVulnerabilities=true"
+    projectInventory = get_project_inventory_details_with_options(baseURL, projectID, authToken, APIOPTIONS)
+    return projectInventory
+
+
+#------------------------------------------------------------------------------------------#
 def get_project_inventory_details_without_files(baseURL, projectID, authToken):
     logger.info("Entering get_project_inventory_details_without_files")
     APIOPTIONS = "&includeFiles=false"
