@@ -60,21 +60,22 @@ def get_scanned_files_details_with_options(baseURL, projectID, authToken, APIOPT
         numPages = response.headers["Number-of-pages"]
         nextPage = int(currentPage) + 1
 
-        while int(nextPage) <= int(numPages):
-            RESTAPI_URL = ENDPOINT_URL + str(nextPage) + APIOPTIONS
-            response = requests.get(RESTAPI_URL, headers=headers)
+        if int(numPages) > 1:
 
-            nextPage = int(response.headers["Current-page"]) + 1
-            scannedFiles += response.json()["data"]
-        
-        return scannedFiles
+            # There is more than a single page of data so make an additional call to get
+            # all of the data in a single call
+            RESTAPI_URL = ENDPOINT_URL + "1" + "&limit=" + str(int(numPages)*25) + APIOPTIONS
+            response = requests.get(RESTAPI_URL, headers=headers)
+            scannedFiles = response.json()["data"]
+
+        return scannedFiles       
 
 
     elif response.status_code == 400:
 
-        print(response.json())
         # See if there are no results or an error
         if "Total records :0 number of pages :0" in str(response.json()["errors"]):
+            logger.error("No scanned files for projects")
             return []
         else:
             logger.error("Response code %s - %s" %(response.status_code, response.text))

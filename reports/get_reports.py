@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------------------------#
 def get_all_currently_registered_reports(baseURL, authToken):
+    logger.info("Entering get_all_currently_registered_reports")
 
     APIOPTIONS = ""
     currentReports = get_currently_registered_reports(baseURL, authToken, APIOPTIONS)
@@ -22,18 +23,16 @@ def get_all_currently_registered_reports(baseURL, authToken):
 
 #------------------------------------------------------------------------------------------#
 def get_all_currently_registered_reports_by_name(baseURL, authToken, reportName):
+    logger.info("Entering get_all_currently_registered_reports_by_name")
 
     APIOPTIONS = "?name=" + reportName
     currentReports = get_currently_registered_reports(baseURL, authToken, APIOPTIONS)
 
     return currentReports
 
-
-
-
 #------------------------------------------------------------------------------------------#
 def get_currently_registered_reports(baseURL, authToken, APIOPTIONS):
-    logger.info("Entering upload_project_report_data")
+    logger.info("Entering get_currently_registered_reports")
 
     RESTAPI_BASEURL = baseURL + "/codeinsight/api/"
     ENDPOINT_URL = RESTAPI_BASEURL + "reports/"
@@ -46,24 +45,15 @@ def get_currently_registered_reports(baseURL, authToken, APIOPTIONS):
     # Make the REST API call with the project data           
     try:
         response = requests.get(RESTAPI_URL, headers=headers)
-        logger.info("    Current report list retreived")
     except requests.exceptions.RequestException as error:  # Just catch all errors
         logger.error(error)
-        raise
+        return {"error" : error}
         
     ###############################################################################
-    # We at least received a response from Code Insight so check the status to see
+    # We at least received a response from so check the status to see
     # what happened if there was an error or the expected data
     if response.status_code == 200:
-        return(response.json()["data"])
-    elif response.status_code == 400:
-        logger.error("Response code %s - %s" %(response.status_code, response.text))
-        print("Response code: %s   -  Bad Request" %response.status_code )
-        response.raise_for_status()
-    elif response.status_code == 401:
-        logger.error("Response code %s - %s" %(response.status_code, response.text))
-        print("Response code: %s   -  Unauthorized" %response.status_code )
-        response.raise_for_status()    
+        return(response.json()["data"])  
     else: 
         logger.error("Response code %s - %s" %(response.status_code, response.text))
-        response.raise_for_status()
+        return {"error" : response.text }
