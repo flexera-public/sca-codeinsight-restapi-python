@@ -25,7 +25,7 @@ def upload_project_report_data(baseURL, projectID, reportID, authToken, uploadZi
     formOptions = {'projectId': str(projectID),'reportId': str(reportID)}
     files = [ ('file', open(uploadZipflle,'rb')) ]
 
-    headers = {'Content Type': 'multipart/form-data','Authorization': 'Bearer ' + authToken}  
+    headers = {'Authorization': 'Bearer ' + authToken}  
        
     ##########################################################################   
     # Make the REST API call with the project data           
